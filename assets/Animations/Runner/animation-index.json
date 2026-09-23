@@ -1,0 +1,129 @@
+{
+  "player": {
+    "atlas": "Sprites/Runner/Atlases/player-woman.png",
+    "atlasMetadata": "Animations/Runner/player-atlas.json",
+    "animations": {
+      "idle": {
+        "fps": 9.0,
+        "loop": true,
+        "frames": [
+          "Sprites/Runner/Frames/Player/idle_0.png",
+          "Sprites/Runner/Frames/Player/idle_1.png",
+          "Sprites/Runner/Frames/Player/idle_2.png",
+          "Sprites/Runner/Frames/Player/idle_3.png",
+          "Sprites/Runner/Frames/Player/idle_4.png",
+          "Sprites/Runner/Frames/Player/idle_5.png",
+          "Sprites/Runner/Frames/Player/idle_6.png",
+          "Sprites/Runner/Frames/Player/idle_7.png",
+          "Sprites/Runner/Frames/Player/idle_8.png",
+          "Sprites/Runner/Frames/Player/idle_9.png",
+          "Sprites/Runner/Frames/Player/idle_10.png",
+          "Sprites/Runner/Frames/Player/idle_11.png",
+          "Sprites/Runner/Frames/Player/idle_12.png",
+          "Sprites/Runner/Frames/Player/idle_13.png",
+          "Sprites/Runner/Frames/Player/idle_14.png",
+          "Sprites/Runner/Frames/Player/idle_15.png",
+          "Sprites/Runner/Frames/Player/idle_16.png",
+          "Sprites/Runner/Frames/Player/idle_17.png"
+        ]
+      },
+      "run": {
+        "fps": 9.0,
+        "loop": true,
+        "frames": [
+          "Sprites/Runner/Frames/Player/run_0.png",
+          "Sprites/Runner/Frames/Player/run_1.png",
+          "Sprites/Runner/Frames/Player/run_2.png",
+          "Sprites/Runner/Frames/Player/run_3.png",
+          "Sprites/Runner/Frames/Player/run_4.png",
+          "Sprites/Runner/Frames/Player/run_5.png",
+          "Sprites/Runner/Frames/Player/run_6.png",
+          "Sprites/Runner/Frames/Player/run_7.png"
+        ]
+      },
+      "jump": {
+        "fps": 13.5,
+        "loop": false,
+        "frames": [
+          "Sprites/Runner/Frames/Player/jump_0.png",
+          "Sprites/Runner/Frames/Player/jump_1.png",
+          "Sprites/Runner/Frames/Player/jump_2.png",
+          "Sprites/Runner/Frames/Player/jump_3.png",
+          "Sprites/Runner/Frames/Player/jump_4.png",
+          "Sprites/Runner/Frames/Player/jump_5.png",
+          "Sprites/Runner/Frames/Player/jump_6.png",
+          "Sprites/Runner/Frames/Player/jump_7.png",
+          "Sprites/Runner/Frames/Player/jump_8.png",
+          "Sprites/Runner/Frames/Player/jump_9.png"
+        ]
+      },
+      "hurt": {
+        "fps": 18.0,
+        "loop": false,
+        "frames": [
+          "Sprites/Runner/Frames/Player/hurt_0.png",
+          "Sprites/Runner/Frames/Player/hurt_1.png",
+          "Sprites/Runner/Frames/Player/hurt_2.png",
+          "Sprites/Runner/Frames/Player/hurt_3.png",
+          "Sprites/Runner/Frames/Player/hurt_4.png"
+        ]
+      }
+    }
+  },
+  "enemy": {
+    "atlas": "Sprites/Runner/Atlases/enemy-spritesheet.png",
+    "atlasMetadata": "Animations/Runner/enemy-atlas.json",
+    "animations": {
+      "default": {
+        "fps": 12.0,
+        "loop": true,
+        "frames": [
+          "Sprites/Runner/Frames/Enemy/frame_0.png",
+          "Sprites/Runner/Frames/Enemy/frame_1.png",
+          "Sprites/Runner/Frames/Enemy/frame_2.png",
+          "Sprites/Runner/Frames/Enemy/frame_3.png",
+          "Sprites/Runner/Frames/Enemy/frame_4.png",
+          "Sprites/Runner/Frames/Enemy/frame_5.png",
+          "Sprites/Runner/Frames/Enemy/frame_6.png",
+          "Sprites/Runner/Frames/Enemy/frame_7.png",
+          "Sprites/Runner/Frames/Enemy/frame_8.png",
+          "Sprites/Runner/Frames/Enemy/frame_9.png",
+          "Sprites/Runner/Frames/Enemy/frame_10.png",
+          "Sprites/Runner/Frames/Enemy/frame_11.png",
+          "Sprites/Runner/Frames/Enemy/frame_12.png",
+          "Sprites/Runner/Frames/Enemy/frame_13.png",
+          "Sprites/Runner/Frames/Enemy/frame_14.png",
+          "Sprites/Runner/Frames/Enemy/frame_15.png",
+          "Sprites/Runner/Frames/Enemy/frame_16.png",
+          "Sprites/Runner/Frames/Enemy/frame_17.png",
+          "Sprites/Runner/Frames/Enemy/frame_18.png",
+          "Sprites/Runner/Frames/Enemy/frame_19.png",
+          "Sprites/Runner/Frames/Enemy/frame_20.png",
+          "Sprites/Runner/Frames/Enemy/frame_21.png",
+          "Sprites/Runner/Frames/Enemy/frame_22.png",
+          "Sprites/Runner/Frames/Enemy/frame_23.png",
+          "Sprites/Runner/Frames/Enemy/frame_24.png",
+          "Sprites/Runner/Frames/Enemy/frame_25.png",
+          "Sprites/Runner/Frames/Enemy/frame_26.png",
+          "Sprites/Runner/Frames/Enemy/frame_27.png",
+          "Sprites/Runner/Frames/Enemy/frame_28.png",
+          "Sprites/Runner/Frames/Enemy/frame_29.png",
+          "Sprites/Runner/Frames/Enemy/frame_30.png",
+          "Sprites/Runner/Frames/Enemy/frame_31.png",
+          "Sprites/Runner/Frames/Enemy/frame_32.png",
+          "Sprites/Runner/Frames/Enemy/frame_33.png",
+          "Sprites/Runner/Frames/Enemy/frame_34.png",
+          "Sprites/Runner/Frames/Enemy/frame_35.png",
+          "Sprites/Runner/Frames/Enemy/frame_36.png",
+          "Sprites/Runner/Frames/Enemy/frame_37.png",
+          "Sprites/Runner/Frames/Enemy/frame_38.png",
+          "Sprites/Runner/Frames/Enemy/frame_39.png",
+          "Sprites/Runner/Frames/Enemy/frame_40.png",
+          "Sprites/Runner/Frames/Enemy/frame_41.png",
+          "Sprites/Runner/Frames/Enemy/frame_42.png",
+          "Sprites/Runner/Frames/Enemy/frame_43.png"
+        ]
+      }
+    }
+  }
+}

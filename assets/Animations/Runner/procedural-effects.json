@@ -1,0 +1,49 @@
+{
+  "collectiblePulse": {
+    "PULSE_SPEED": 0.0005,
+    "PULSE_MIN": 0.95,
+    "PULSE_MAX": 1.05
+  },
+  "obstacleGlowPulse": {
+    "PULSE_SPEED": 0.003,
+    "SCALE_MIN": 0.9,
+    "SCALE_MAX": 1.1,
+    "BASE_SCALE": 0.8
+  },
+  "finishLineRopes": {
+    "ROPE_SEGMENTS": 10,
+    "ROPE_LENGTH_FACTOR": 0.3,
+    "GRAVITY": 0.3,
+    "DAMPING": 0.95,
+    "WAVE_SPEED": 0.01,
+    "TIME_DECAY": 0.15,
+    "MIN_VELOCITY_THRESHOLD": 0.1,
+    "MIN_ANIMATION_TIME": 1,
+    "ROPE_SEGMENT_DISTANCE": 10,
+    "LEFT_ROPE_OFFSET_X": 0,
+    "LEFT_ROPE_OFFSET_Y": 0,
+    "RIGHT_ROPE_OFFSET_X": 20,
+    "RIGHT_ROPE_OFFSET_Y": -20,
+    "TAPE_BREAK_OFFSET": -300
+  },
+  "confetti": {
+    "PARTICLE_COUNT": 50,
+    "LIFETIME": 5000.0,
+    "FADE_START": 0.7,
+    "SCALE_MIN": 0.8,
+    "SCALE_MAX": 1.5,
+    "BURST_SPEED_MIN": 12,
+    "BURST_SPEED_MAX": 20,
+    "BURST_ANGLE_SPREAD": 30,
+    "SIDE_MARGIN": 50,
+    "SIDE_SPAWN_HEIGHT": 0.7,
+    "SIDE_SPAWN_SPREAD_Y": 200,
+    "SPAWN_SPREAD_X": 100,
+    "SPAWN_SPREAD_Y": 50,
+    "GRAVITY": 0.05,
+    "AIR_RESISTANCE": 0.998,
+    "WIND_X": 0,
+    "ROTATION_SPEED_MIN": 0.02,
+    "ROTATION_SPEED_MAX": 0.1
+  }
+}

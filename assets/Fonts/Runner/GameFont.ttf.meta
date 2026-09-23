@@ -1,0 +1,12 @@
+{
+  "ver": "1.0.1",
+  "importer": "ttf-font",
+  "imported": true,
+  "uuid": "4f857e15-2933-4550-9540-60f6796d18f9",
+  "files": [
+    ".json",
+    "GameFont.ttf"
+  ],
+  "subMetas": {},
+  "userData": {}
+}

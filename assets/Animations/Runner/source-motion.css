@@ -1,0 +1,20 @@
+/* Original CSS keyframes; reference for recreating UI motion in Cocos. */
+@keyframes counter-pulse{0%{transform:scale(1)}50%{transform:scale(1.15)}to{transform:scale(1)}}
+
+@keyframes spin-collectible{0%{transform:rotate(0)}to{transform:rotate(720deg)}}
+
+@keyframes pulse{0%,to{transform:scale(1)}50%{transform:scale(1.1)}}
+
+@keyframes praise-pop{0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}20%{opacity:1;transform:translate(-50%,-50%) scale(1.2)}40%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1;transform:translate(-50%,-70%) scale(1)}to{opacity:0;transform:translate(-50%,-100%) scale(.8)}}
+
+@keyframes warning-pulse{0%,to{transform:translate(-50%,-100%) scale(1);border-color:#fc0}50%{transform:translate(-50%,-100%) scale(1.1);border-color:#fff700}}
+
+@keyframes lights-fade-in{0%{opacity:0;transform:translate(-50%,-50%) scale(1)}to{opacity:1;transform:translate(-50%,-50%) scale(1.5)}}
+
+@keyframes lights-rotate{0%{transform:translate(-50%,-50%) scale(1.5) rotate(0)}to{transform:translate(-50%,-50%) scale(1.5) rotate(360deg)}}
+
+@keyframes card-scale-bounce{0%{transform:scale(0)}60%{transform:scale(1.5)}to{transform:scale(1)}}
+
+@keyframes pulse-button{0%,to{transform:scale(.9)}50%{transform:scale(1.1)}}
+
+@keyframes fail-scale-in{0%{transform:scale(0);opacity:0}70%{transform:scale(1.2);opacity:1}to{transform:scale(1);opacity:1}}

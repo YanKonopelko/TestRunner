@@ -1,0 +1,10 @@
+{
+  "jump": { "file": "jump.mp3", "volume": 0.5, "loop": false },
+  "hit": { "file": "hit.mp3", "volume": 0.6, "loop": false },
+  "hurt": { "file": "hurt.mp3", "volume": 0.7, "loop": false },
+  "collect": { "file": "collect.mp3", "volume": 0.4, "loop": false },
+  "step": { "file": "step.mp3", "volume": 0.3, "loop": false },
+  "win": { "file": "win.mp3", "volume": 0.8, "loop": false },
+  "lose": { "file": "lose.mp3", "volume": 0.8, "loop": false },
+  "music": { "file": "music.mp3", "volume": 0.3, "loop": true }
+}
