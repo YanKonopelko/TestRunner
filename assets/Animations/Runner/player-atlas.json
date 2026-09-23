@@ -875,7 +875,7 @@
   "meta": {
     "app": "https://www.codeandweb.com/texturepacker",
     "version": "3.0",
-    "image": "player-woman.png",
+    "image": "player-woman.webp",
     "format": "RGBA8888",
     "size": {
       "w": 932,

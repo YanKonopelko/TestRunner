@@ -932,7 +932,7 @@
   "meta": {
     "app": "auto-detect",
     "version": "1.0",
-    "image": "enemy-spritesheet.png",
+    "image": "enemy-spritesheet.webp",
     "format": "RGBA8888",
     "size": {
       "w": 1682,
