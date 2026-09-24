@@ -500,7 +500,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": -360,
+      "x": 2743,
       "y": 640,
       "z": 0
     },
@@ -513,7 +513,7 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 1.818,
+      "x": -1.818,
       "y": 1.818,
       "z": 1
     },
@@ -718,7 +718,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 5846,
+      "x": 8949,
       "y": 640,
       "z": 0
     },
@@ -731,7 +731,7 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 1.818,
+      "x": -1.818,
       "y": 1.818,
       "z": 1
     },
@@ -936,7 +936,7 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 12052,
+      "x": 15155,
       "y": 640,
       "z": 0
     },
@@ -949,7 +949,7 @@
     },
     "_lscale": {
       "__type__": "cc.Vec3",
-      "x": 1.818,
+      "x": -1.818,
       "y": 1.818,
       "z": 1
     },
@@ -20569,8 +20569,8 @@
     "_string": "♥  ♥  ♥",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 47,
-    "_fontSize": 46,
+    "_actualFontSize": 30,
+    "_fontSize": 29,
     "_fontFamily": "Arial",
     "_lineHeight": 51.52,
     "_overflow": 2,

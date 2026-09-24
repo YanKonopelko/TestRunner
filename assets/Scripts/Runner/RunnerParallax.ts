@@ -23,18 +23,26 @@ export class RunnerParallax extends Component {
         for (const group of this.groups()) {
             const children = group.children;
             if (!children.length) continue;
-            let rightmost = Math.max(...children.map(n => n.position.x));
+            const isBackground = group === this.backgroundTiles;
+            const tileWidth = 3103;
+            let rightmost = Math.max(...children.map(n =>
+                isBackground && n.scale.x > 0 ? n.position.x + tileWidth : n.position.x));
             for (const node of children) {
                 const p = node.position;
                 let x = p.x - distance;
-                // Road tiles use a top-left anchor: their x is the left edge, not the center.
-                const pastLeftEdge = group === this.backgroundTiles
-                    ? x + 3103 < -visibleWidth / 2
+                // Adjacent road tiles alternate direction, so their matching edges meet.
+                const pastLeftEdge = isBackground
+                    ? x + (node.scale.x > 0 ? tileWidth : 0) < -visibleWidth / 2
                     : x < -Math.max(2500, visibleWidth / 2 + 1600);
                 if (pastLeftEdge) {
-                    const spacing = group === this.backgroundTiles ? 3103 : group === this.lamps ? 800 : group === this.trees ? 400 : 170;
-                    x = rightmost + spacing;
-                    rightmost = x;
+                    if (isBackground) {
+                        x = rightmost + (node.scale.x < 0 ? tileWidth : 0);
+                        rightmost += tileWidth;
+                    } else {
+                        const spacing = group === this.lamps ? 800 : group === this.trees ? 400 : 170;
+                        x = rightmost + spacing;
+                        rightmost = x;
+                    }
                 }
                 node.setPosition(x, p.y, p.z);
             }

@@ -1,6 +1,6 @@
 import {
-    _decorator, AudioSource, Component, Game, game, input, Input, Label, Node,
-    ResolutionPolicy, Sprite, SpriteFrame, UITransform, Vec3, view, tween,
+    _decorator, AudioSource, Component, Game, game, input, Input, instantiate, Label, Node,
+    ResolutionPolicy, Sprite, SpriteFrame, UIOpacity, UITransform, Vec3, view, tween,
 } from 'cc';
 import { RunnerAnimator } from './RunnerAnimator';
 import { RunnerConfetti } from './RunnerConfetti';
@@ -76,6 +76,10 @@ export class RunnerGame extends Component {
     private layoutWidth = 0;
     private layoutHeight = 0;
     private overlayScale = 1;
+    private pulseTime = 0;
+    private portraitButtonBaseScale = new Vec3(1, 1, 1);
+    private landscapeButtonBaseScale = new Vec3(1, 1, 1);
+    private heartIcons: UIOpacity[] = [];
 
     onLoad(): void {
         view.setDesignResolutionSize(720, 1280, ResolutionPolicy.FIXED_HEIGHT);
@@ -94,6 +98,7 @@ export class RunnerGame extends Component {
             const node = this.required(this.required(this.audioRoot, 'Audio').getChildByName(name), `Audio/${name}`);
             this.audio.set(name, this.required(node.getComponent(AudioSource), `${name} AudioSource`));
         }
+        this.setupHeartIcons();
         this.required(this.footerButton, 'Footer Button').on(Node.EventType.TOUCH_END, this.toStore, this);
         this.footerLandscape?.getChildByName('LandscapeButton')?.on(Node.EventType.TOUCH_END, this.toStore, this);
         this.required(this.endButton, 'End Button').on(Node.EventType.TOUCH_END, this.toStore, this);
@@ -131,6 +136,7 @@ export class RunnerGame extends Component {
         this.endCountElapsed = 0;
         this.endCountValue = 0;
         this.stepElapsed = 0;
+        this.pulseTime = 0;
         this.player.setPosition(this.player.position.x, this.groundY, 0);
         this.animator.play('idle', true);
         this.animator.setHurtFlash(false);
@@ -188,6 +194,7 @@ export class RunnerGame extends Component {
     update(dt: number): void {
         this.applyResponsiveLayout();
         if (this.hiddenPause) return;
+        this.animateVisuals(dt);
         this.updateJump(dt);
         this.updateHurt(dt);
         this.updateEnd(dt);
@@ -395,8 +402,26 @@ export class RunnerGame extends Component {
     }
 
     private updateHud(): void {
-        this.heartsLabel!.string = Array.from({ length: this.maxHealth }, (_, i) => i < this.hp ? '♥' : '♡').join('  ');
+        this.heartIcons.forEach((icon, i) => { icon.opacity = i < this.hp ? 255 : 77; });
         this.scoreLabel!.string = `$${Math.floor(this.score)}`;
+    }
+
+    private setupHeartIcons(): void {
+        const container = this.required(this.heartsLabel, 'Hearts Label').node;
+        const template = instantiate(container);
+        const icons = Array.from({ length: this.maxHealth }, (_, i) => i === 0 ? template : instantiate(template));
+        this.heartsLabel!.enabled = false;
+        for (let i = 0; i < icons.length; i++) {
+            const icon = icons[i];
+            icon.name = `Heart${i + 1}`;
+            icon.setParent(container);
+            icon.setPosition((i - (this.maxHealth - 1) / 2) * 45, 0, 0);
+            icon.setScale(1, 1, 1);
+            const label = this.required(icon.getComponent(Label), `Heart${i + 1} Label`);
+            label.enabled = true;
+            label.string = '❤️';
+            this.heartIcons.push(icon.addComponent(UIOpacity));
+        }
     }
 
     private updateFooter(): void {
@@ -404,6 +429,26 @@ export class RunnerGame extends Component {
         const landscape = this.layoutWidth > this.layoutHeight;
         this.footerPortrait!.active = !landscape;
         this.footerLandscape!.active = landscape;
+    }
+
+    private animateVisuals(dt: number): void {
+        this.pulseTime = (this.pulseTime + dt) % 1;
+        const phase = (1 - Math.cos(this.pulseTime * Math.PI * 2)) / 2;
+        const handPulse = 1 + phase * 0.1;
+        const buttonPulse = 0.9 + phase * 0.2;
+
+        for (const [prompt, name] of [[this.introPrompt, 'IntroHand'], [this.jumpPrompt, 'JumpHand']] as const) {
+            if (prompt?.active) prompt.getChildByName(name)?.setScale(0.1 * handPulse, 0.1 * handPulse, 1);
+        }
+        if (this.footerPortrait?.active) {
+            this.footerButton?.setScale(this.portraitButtonBaseScale.x * buttonPulse,
+                this.portraitButtonBaseScale.y * buttonPulse, 1);
+        }
+        if (this.footerLandscape?.active) {
+            this.footerLandscape.getChildByName('LandscapeButton')?.setScale(
+                this.landscapeButtonBaseScale.x * buttonPulse, this.landscapeButtonBaseScale.y * buttonPulse, 1);
+        }
+        if (this.endOverlay?.active) this.endButton?.setScale(this.overlayScale * buttonPulse, this.overlayScale * buttonPulse, 1);
     }
 
     private applyResponsiveLayout(): void {
@@ -454,7 +499,8 @@ export class RunnerGame extends Component {
         const portraitButton = this.footerPortrait?.getChildByName('FooterButton');
         const portraitButtonWidth = Math.min(190, 42 + frameSize.width * 0.115);
         portraitButton?.setPosition(halfWidth - (20 + portraitButtonWidth / 2) * pixel, portraitY - 4 * pixel, 0);
-        portraitButton?.setScale(portraitButtonWidth * pixel / 190, 43 * pixel / 66, 1);
+        this.portraitButtonBaseScale.set(portraitButtonWidth * pixel / 190, 43 * pixel / 66, 1);
+        portraitButton?.setScale(this.portraitButtonBaseScale);
 
         const landscapeHeight = frameSize.width / 10;
         const landscapeY = -halfHeight + landscapeHeight * pixel / 2;
@@ -464,7 +510,8 @@ export class RunnerGame extends Component {
         const landscapeButton = this.footerLandscape?.getChildByName('LandscapeButton');
         const landscapeButtonWidth = Math.min(190, 42 + frameSize.width * 0.115);
         landscapeButton?.setPosition(halfWidth - (12 + landscapeButtonWidth / 2) * pixel, landscapeY - 4 * pixel, 0);
-        landscapeButton?.setScale(landscapeButtonWidth * pixel / 190, 58 * pixel / 66, 1);
+        this.landscapeButtonBaseScale.set(landscapeButtonWidth * pixel / 190, 58 * pixel / 66, 1);
+        landscapeButton?.setScale(this.landscapeButtonBaseScale);
 
         for (const name of ['DimOverlay', 'FailOverlay', 'EndOverlay']) {
             const overlay = ui?.getChildByName(name);
