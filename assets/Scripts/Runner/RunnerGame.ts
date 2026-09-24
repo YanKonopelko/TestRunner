@@ -1,6 +1,6 @@
 import {
     _decorator, AudioSource, Component, Game, game, input, Input, Label, Node,
-    Sprite, SpriteFrame, UITransform, Vec3, view, tween,
+    ResolutionPolicy, Sprite, SpriteFrame, UITransform, Vec3, view, tween,
 } from 'cc';
 import { RunnerAnimator } from './RunnerAnimator';
 import { RunnerConfetti } from './RunnerConfetti';
@@ -73,6 +73,13 @@ export class RunnerGame extends Component {
     private endTargetValue = 0;
     private hiddenPause = false;
     private stepElapsed = 0;
+    private layoutWidth = 0;
+    private layoutHeight = 0;
+    private overlayScale = 1;
+
+    onLoad(): void {
+        view.setDesignResolutionSize(720, 1280, ResolutionPolicy.FIXED_HEIGHT);
+    }
 
     start(): void {
         this.player = this.required(this.playerNode, 'Player');
@@ -88,11 +95,13 @@ export class RunnerGame extends Component {
             this.audio.set(name, this.required(node.getComponent(AudioSource), `${name} AudioSource`));
         }
         this.required(this.footerButton, 'Footer Button').on(Node.EventType.TOUCH_END, this.toStore, this);
+        this.footerLandscape?.getChildByName('LandscapeButton')?.on(Node.EventType.TOUCH_END, this.toStore, this);
         this.required(this.endButton, 'End Button').on(Node.EventType.TOUCH_END, this.toStore, this);
         input.on(Input.EventType.TOUCH_START, this.handleTap, this);
         input.on(Input.EventType.MOUSE_DOWN, this.handleTap, this);
         game.on(Game.EVENT_HIDE, this.onHide, this);
         game.on(Game.EVENT_SHOW, this.onShow, this);
+        this.applyResponsiveLayout();
         this.restart();
     }
 
@@ -177,6 +186,7 @@ export class RunnerGame extends Component {
     }
 
     update(dt: number): void {
+        this.applyResponsiveLayout();
         if (this.hiddenPause) return;
         this.updateJump(dt);
         this.updateHurt(dt);
@@ -207,7 +217,7 @@ export class RunnerGame extends Component {
         this.spawns.setPosition(-this.distance, 0, 0);
         this.parallax.scroll(move);
         for (const entity of this.entities) {
-            if (entity.node.active && entity.isSpawned(this.distance)) entity.tick(dt);
+            if (entity.node.active && entity.isSpawned(this.distance, this.layoutWidth)) entity.tick(dt);
         }
         if (!this.tutorialTriggered && this.state === 'running') this.checkTutorial();
         if (this.state === 'running' || this.state === 'winning') {
@@ -239,7 +249,7 @@ export class RunnerGame extends Component {
 
     private checkTutorial(): void {
         const enemy = this.entities.find(e => e.tutorialPause);
-        if (!enemy || !enemy.isSpawned(this.distance)) return;
+        if (!enemy || !enemy.isSpawned(this.distance, this.layoutWidth)) return;
         if (this.screenX(enemy) - this.player.position.x > 300) return;
         this.tutorialTriggered = true;
         this.state = 'tutorial';
@@ -254,7 +264,7 @@ export class RunnerGame extends Component {
         const px = this.player.position.x;
         const py = this.player.position.y + 85;
         for (const entity of this.entities) {
-            if (!entity.node.active || !entity.isSpawned(this.distance) || (entity.kind !== 'dollar' && entity.kind !== 'paypal')) continue;
+            if (!entity.node.active || !entity.isSpawned(this.distance, this.layoutWidth) || (entity.kind !== 'dollar' && entity.kind !== 'paypal')) continue;
             const dx = this.screenX(entity) - px;
             const dy = entity.node.position.y - py;
             const nearestX = Math.max(-22, Math.min(22, dx));
@@ -280,7 +290,7 @@ export class RunnerGame extends Component {
         const px = this.player.position.x;
         const py = this.player.position.y;
         for (const entity of this.entities) {
-            if (!entity.node.active || !entity.isSpawned(this.distance) || (entity.kind !== 'enemy' && entity.kind !== 'cone')) continue;
+            if (!entity.node.active || !entity.isSpawned(this.distance, this.layoutWidth) || (entity.kind !== 'enemy' && entity.kind !== 'cone')) continue;
             const x = this.screenX(entity);
             const y = entity.node.position.y;
             const halfWidth = entity.kind === 'enemy' ? 35 : 38;
@@ -301,7 +311,7 @@ export class RunnerGame extends Component {
     private checkFinish(): void {
         if (this.finishTriggered) return;
         const finish = this.entities.find(e => e.kind === 'finish');
-        if (!finish || !finish.isSpawned(this.distance)) return;
+        if (!finish || !finish.isSpawned(this.distance, this.layoutWidth)) return;
         if (this.player.position.x < this.screenX(finish) - 300) return;
         this.finishTriggered = true;
         this.state = 'winning';
@@ -342,7 +352,8 @@ export class RunnerGame extends Component {
         this.endCountdown = 60;
         this.countdownLabel!.string = '01:00';
         this.endCardNode!.setScale(0, 0, 1);
-        tween(this.endCardNode!).to(0.6, { scale: new Vec3(1.15, 1.15, 1) }).to(0.2, { scale: Vec3.ONE }).start();
+        tween(this.endCardNode!).to(0.6, { scale: new Vec3(this.overlayScale * 1.15, this.overlayScale * 1.15, 1) })
+            .to(0.2, { scale: new Vec3(this.overlayScale, this.overlayScale, 1) }).start();
         this.lightsNode!.angle = 0;
     }
 
@@ -367,7 +378,7 @@ export class RunnerGame extends Component {
         icon.active = true;
         icon.setPosition(this.screenX(entity), entity.node.position.y, 0);
         icon.setScale(0.15, 0.15, 1);
-        tween(icon).to(0.4, { position: new Vec3(240, 555, 0), scale: new Vec3(0.08, 0.08, 1) })
+        tween(icon).to(0.4, { position: new Vec3(this.layoutWidth / 2 - 120, this.layoutHeight / 2 - 85, 0), scale: new Vec3(0.08, 0.08, 1) })
             .call(() => { icon.active = false; }).start();
     }
 
@@ -377,8 +388,8 @@ export class RunnerGame extends Component {
         this.praiseNode!.active = true;
         this.praiseNode!.setPosition(0, 120, 0);
         this.praiseNode!.setScale(0.5, 0.5, 1);
-        tween(this.praiseNode!).to(0.2, { scale: new Vec3(1.2, 1.2, 1) })
-            .to(0.2, { scale: Vec3.ONE })
+        tween(this.praiseNode!).to(0.2, { scale: new Vec3(this.overlayScale * 1.2, this.overlayScale * 1.2, 1) })
+            .to(0.2, { scale: new Vec3(this.overlayScale, this.overlayScale, 1) })
             .to(0.7, { position: new Vec3(0, 190, 0) })
             .call(() => { this.praiseNode!.active = false; }).start();
     }
@@ -390,10 +401,88 @@ export class RunnerGame extends Component {
 
     private updateFooter(): void {
         if (this.state === 'end' || this.state === 'lose') return;
-        const size = view.getVisibleSize();
-        const landscape = size.width > size.height;
+        const landscape = this.layoutWidth > this.layoutHeight;
         this.footerPortrait!.active = !landscape;
         this.footerLandscape!.active = landscape;
+    }
+
+    private applyResponsiveLayout(): void {
+        const designSize = view.getVisibleSize();
+        const frameSize = view.getFrameSize();
+        if (frameSize.height <= 0) return;
+        const size = { width: designSize.height * frameSize.width / frameSize.height, height: designSize.height };
+        if (Math.abs(size.width - this.layoutWidth) < 1 && Math.abs(size.height - this.layoutHeight) < 1) return;
+        this.layoutWidth = size.width;
+        this.layoutHeight = size.height;
+
+        const halfWidth = size.width / 2;
+        const halfHeight = size.height / 2;
+        const pixel = size.height / frameSize.height;
+        this.overlayScale = Math.min(1, (size.width - 32) / 680);
+
+        const hud = this.node.getChildByName('UI')?.getChildByName('HUD');
+        const hearts = hud?.getChildByName('Hearts');
+        hearts?.setPosition(-halfWidth + 83 * pixel, halfHeight - 62 * pixel, 0);
+        hearts?.setScale(1.72 * 720 / frameSize.height, 1.72 * 720 / frameSize.height, 1);
+        const balance = hud?.getChildByName('Balance');
+        balance?.setPosition(halfWidth - 79 * pixel, halfHeight - 60 * pixel, 0);
+        const balanceScale = 115 * pixel / 808;
+        balance?.setScale(balanceScale, balanceScale, 1);
+        hud?.getChildByName('Score')?.setPosition(halfWidth - 52 * pixel, halfHeight - 60 * pixel, 0);
+
+        const ui = this.node.getChildByName('UI');
+        ui?.getChildByName('IntroPrompt')?.setScale(this.overlayScale, this.overlayScale, 1);
+        ui?.getChildByName('JumpPrompt')?.setScale(this.overlayScale, this.overlayScale, 1);
+        const promptWidth = Math.min(1200, size.width / (2 * this.overlayScale));
+        const promptFont = Math.min(42, Math.max(28, frameSize.width * 0.06)) * pixel / this.overlayScale;
+        for (const prompt of [this.introPrompt, this.jumpPrompt]) {
+            const labelNode = prompt?.getChildByName(prompt === this.introPrompt ? 'IntroText' : 'JumpText');
+            labelNode?.getComponent(UITransform)?.setContentSize(promptWidth, 180);
+            const label = labelNode?.getComponent(Label);
+            if (label) label.fontSize = promptFont;
+            labelNode?.setPosition(0, 15, 0);
+            prompt?.getChildByName(prompt === this.introPrompt ? 'IntroHand' : 'JumpHand')
+                ?.setPosition(0, frameSize.width < frameSize.height ? -384 : -307, 0);
+        }
+
+        const portraitHeight = frameSize.width / 5.37;
+        const portraitScale = portraitHeight * pixel / 201;
+        const portraitY = -halfHeight + portraitHeight * pixel / 2;
+        const portraitImage = this.footerPortrait?.getChildByName('FooterPortraitImage');
+        portraitImage?.setPosition(0, portraitY, 0);
+        portraitImage?.setScale(size.width / 1080, portraitScale, 1);
+        const portraitButton = this.footerPortrait?.getChildByName('FooterButton');
+        const portraitButtonWidth = Math.min(190, 42 + frameSize.width * 0.115);
+        portraitButton?.setPosition(halfWidth - (20 + portraitButtonWidth / 2) * pixel, portraitY - 4 * pixel, 0);
+        portraitButton?.setScale(portraitButtonWidth * pixel / 190, 43 * pixel / 66, 1);
+
+        const landscapeHeight = frameSize.width / 10;
+        const landscapeY = -halfHeight + landscapeHeight * pixel / 2;
+        const landscapeImage = this.footerLandscape?.getChildByName('FooterLandscapeImage');
+        landscapeImage?.setPosition(0, landscapeY, 0);
+        landscapeImage?.setScale(size.width / 2022, landscapeHeight * pixel / 201, 1);
+        const landscapeButton = this.footerLandscape?.getChildByName('LandscapeButton');
+        const landscapeButtonWidth = Math.min(190, 42 + frameSize.width * 0.115);
+        landscapeButton?.setPosition(halfWidth - (12 + landscapeButtonWidth / 2) * pixel, landscapeY - 4 * pixel, 0);
+        landscapeButton?.setScale(landscapeButtonWidth * pixel / 190, 58 * pixel / 66, 1);
+
+        for (const name of ['DimOverlay', 'FailOverlay', 'EndOverlay']) {
+            const overlay = ui?.getChildByName(name);
+            const dim = name === 'DimOverlay' ? overlay : overlay?.getChildByName(name === 'FailOverlay' ? 'FailDim' : 'EndDim');
+            dim?.getComponent(UITransform)?.setContentSize(size.width, size.height);
+        }
+
+        const failImage = this.failOverlay?.getChildByName('FailImage');
+        failImage?.setScale(1.4 * this.overlayScale, 1.4 * this.overlayScale, 1);
+        for (const name of ['Lights', 'EndTitle', 'EndSubtitle', 'Countdown', 'EndTagline', 'EndButton']) {
+            const node = this.endOverlay?.getChildByName(name);
+            const scale = name === 'Lights' ? 1.4 * this.overlayScale : this.overlayScale;
+            node?.setScale(scale, scale, 1);
+        }
+        if (this.state === 'end') this.endCardNode?.setScale(this.overlayScale, this.overlayScale, 1);
+
+        // The game uses a fixed logical height; only width changes with orientation.
+        this.updateFooter();
     }
 
     private screenX(entity: RunnerEntity): number { return this.spawns.position.x + entity.node.position.x; }

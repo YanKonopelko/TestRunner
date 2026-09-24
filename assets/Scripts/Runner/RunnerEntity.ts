@@ -70,5 +70,7 @@ export class RunnerEntity extends Component {
     }
 
     get isCollected(): boolean { return this.collected; }
-    isSpawned(distance: number): boolean { return distance >= this.originalPosition.x - 720; }
+    isSpawned(distance: number, visibleWidth = 720): boolean {
+        return distance >= this.originalPosition.x - Math.max(720, visibleWidth / 2 + 360);
+    }
 }

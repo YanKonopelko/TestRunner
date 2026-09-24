@@ -1,4 +1,4 @@
-import { _decorator, Component, Node } from 'cc';
+import { _decorator, Component, Node, view } from 'cc';
 
 const { ccclass, property } = _decorator;
 
@@ -16,6 +16,10 @@ export class RunnerParallax extends Component {
     }
 
     scroll(distance: number): void {
+        const frameSize = view.getFrameSize();
+        const visibleWidth = frameSize.height > 0
+            ? view.getVisibleSize().height * frameSize.width / frameSize.height
+            : view.getVisibleSize().width;
         for (const group of this.groups()) {
             const children = group.children;
             if (!children.length) continue;
@@ -23,7 +27,11 @@ export class RunnerParallax extends Component {
             for (const node of children) {
                 const p = node.position;
                 let x = p.x - distance;
-                if (x < -2500) {
+                // Road tiles use a top-left anchor: their x is the left edge, not the center.
+                const pastLeftEdge = group === this.backgroundTiles
+                    ? x + 3103 < -visibleWidth / 2
+                    : x < -Math.max(2500, visibleWidth / 2 + 1600);
+                if (pastLeftEdge) {
                     const spacing = group === this.backgroundTiles ? 3103 : group === this.lamps ? 800 : group === this.trees ? 400 : 170;
                     x = rightmost + spacing;
                     rightmost = x;
