@@ -17279,8 +17279,8 @@
     "__prefab": null,
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 800,
-      "height": 200
+      "width": 190,
+      "height": 66
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -17307,12 +17307,9 @@
       "r": 255,
       "g": 255,
       "b": 255,
-      "a": 255
+      "a": 0
     },
-    "_spriteFrame": {
-      "__uuid__": "e981f86e-4238-4bc9-b1cb-70f14572e1dc@f9941",
-      "__expectedType__": "cc.SpriteFrame"
-    },
+    "_spriteFrame": null,
     "_type": 0,
     "_fillType": 0,
     "_sizeMode": 2,
@@ -17414,14 +17411,14 @@
     "_color": {
       "__type__": "cc.Color",
       "r": 255,
-      "g": 230,
-      "b": 0,
+      "g": 255,
+      "b": 255,
       "a": 255
     },
     "_string": "Awesome!",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 52,
+    "_actualFontSize": 53,
     "_fontSize": 52,
     "_fontFamily": "Arial",
     "_lineHeight": 58.24000000000001,
@@ -20313,7 +20310,7 @@
     "_string": "You didn't make it!",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 58,
+    "_actualFontSize": 59,
     "_fontSize": 58,
     "_fontFamily": "Arial",
     "_lineHeight": 64.96000000000001,
@@ -20448,7 +20445,7 @@
     "_string": "Try again on the app!",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 44,
+    "_actualFontSize": 45,
     "_fontSize": 44,
     "_fontFamily": "Arial",
     "_lineHeight": 49.28,
@@ -20672,8 +20669,8 @@
     "_prefab": null,
     "_lpos": {
       "__type__": "cc.Vec3",
-      "x": 0,
-      "y": -82,
+      "x": 59.821,
+      "y": 35.059,
       "z": 0
     },
     "_lrot": {
@@ -20744,7 +20741,7 @@
     "_string": "$0.00",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 59,
+    "_actualFontSize": 63,
     "_fontSize": 62,
     "_fontFamily": "Arial",
     "_lineHeight": 70,
@@ -20901,7 +20898,7 @@
     "_string": "01:00",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 60,
+    "_actualFontSize": 61,
     "_fontSize": 60,
     "_fontFamily": "Arial",
     "_lineHeight": 67.2,
@@ -21036,7 +21033,7 @@
     "_string": "Your reward is waiting!",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 42,
+    "_actualFontSize": 43,
     "_fontSize": 42,
     "_fontFamily": "Arial",
     "_lineHeight": 47.040000000000006,
@@ -21223,7 +21220,7 @@
     "_string": "INSTALL AND EARN",
     "_horizontalAlign": 1,
     "_verticalAlign": 1,
-    "_actualFontSize": 48,
+    "_actualFontSize": 49,
     "_fontSize": 48,
     "_fontFamily": "Arial",
     "_lineHeight": 53.760000000000005,

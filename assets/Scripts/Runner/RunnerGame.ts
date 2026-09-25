@@ -228,7 +228,7 @@ export class RunnerGame extends Component {
         }
         if (!this.tutorialTriggered && this.state === 'running') this.checkTutorial();
         if (this.state === 'running' || this.state === 'winning') {
-            this.checkCollectibles();
+            this.checkCollectibles(move);
             this.checkHazards();
             this.checkFinish();
         }
@@ -267,16 +267,24 @@ export class RunnerGame extends Component {
         this.jumpPrompt!.active = true;
     }
 
-    private checkCollectibles(): void {
+    private checkCollectibles(horizontalTravel = 0): void {
         const px = this.player.position.x;
         const py = this.player.position.y + 85;
+        const playerHalfWidth = 50;
+        const playerHalfHeight = 130;
         for (const entity of this.entities) {
             if (!entity.node.active || !entity.isSpawned(this.distance, this.layoutWidth) || (entity.kind !== 'dollar' && entity.kind !== 'paypal')) continue;
-            const dx = this.screenX(entity) - px;
-            const dy = entity.node.position.y - py;
-            const nearestX = Math.max(-22, Math.min(22, dx));
-            const nearestY = Math.max(-65, Math.min(65, dy));
-            if (Math.hypot(dx - nearestX, dy - nearestY) >= 60) continue;
+            const currentX = this.screenX(entity);
+            const previousX = currentX + Math.max(0, horizontalTravel);
+            const left = Math.min(currentX, previousX);
+            const right = Math.max(currentX, previousX);
+            const horizontalGap = px < left ? left - px : px > right ? px - right : 0;
+            const transform = entity.getComponent(UITransform);
+            if (!transform) throw new Error(`Collectible ${entity.node.name} needs UITransform`);
+            const itemHalfWidth = transform.contentSize.width * Math.abs(entity.node.scale.x) * 0.45;
+            const itemHalfHeight = transform.contentSize.height * Math.abs(entity.node.scale.y) * 0.45;
+            if (horizontalGap > playerHalfWidth + itemHalfWidth
+                || Math.abs(entity.node.position.y - py) > playerHalfHeight + itemHalfHeight) continue;
             const amount = entity.kind === 'dollar' ? 20 : 5 + Math.floor(Math.random() * 46);
             this.score += amount;
             this.collectEffect(entity);
@@ -482,9 +490,13 @@ export class RunnerGame extends Component {
         const promptFont = Math.min(42, Math.max(28, frameSize.width * 0.06)) * pixel / this.overlayScale;
         for (const prompt of [this.introPrompt, this.jumpPrompt]) {
             const labelNode = prompt?.getChildByName(prompt === this.introPrompt ? 'IntroText' : 'JumpText');
-            labelNode?.getComponent(UITransform)?.setContentSize(promptWidth, 180);
+            const promptLineHeight = Math.ceil(promptFont * 1.12);
+            labelNode?.getComponent(UITransform)?.setContentSize(promptWidth, Math.max(180, promptLineHeight * 2.4));
             const label = labelNode?.getComponent(Label);
-            if (label) label.fontSize = promptFont;
+            if (label) {
+                label.fontSize = promptFont;
+                label.lineHeight = promptLineHeight;
+            }
             labelNode?.setPosition(0, 15, 0);
             prompt?.getChildByName(prompt === this.introPrompt ? 'IntroHand' : 'JumpHand')
                 ?.setPosition(0, frameSize.width < frameSize.height ? -384 : -307, 0);

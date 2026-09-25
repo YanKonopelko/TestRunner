@@ -31,9 +31,10 @@ export class RunnerParallax extends Component {
                 const p = node.position;
                 let x = p.x - distance;
                 // Adjacent road tiles alternate direction, so their matching edges meet.
+                const offscreenMargin = group === this.trees ? 520 : group === this.lamps ? 300 : 220;
                 const pastLeftEdge = isBackground
                     ? x + (node.scale.x > 0 ? tileWidth : 0) < -visibleWidth / 2
-                    : x < -Math.max(2500, visibleWidth / 2 + 1600);
+                    : x < -visibleWidth / 2 - offscreenMargin;
                 if (pastLeftEdge) {
                     if (isBackground) {
                         x = rightmost + (node.scale.x < 0 ? tileWidth : 0);
