@@ -1,4 +1,4 @@
-import { _decorator, Component, Node, Vec3 } from 'cc';
+import { _decorator, Color, Component, Node, Sprite, Vec3 } from 'cc';
 import { RunnerAnimator } from './RunnerAnimator';
 
 const { ccclass, property } = _decorator;
@@ -16,7 +16,8 @@ export class RunnerEntity extends Component {
     private pulseTime = 0;
     private collected = false;
     private warningNode: Node | null = null;
-    private glowNode: Node | null = null;
+    private warningBackgroundNode: Node | null = null;
+    private glowSprite: Sprite | null = null;
 
     onLoad(): void {
         if (!['dollar', 'paypal', 'enemy', 'cone', 'finish'].includes(this.kind)) {
@@ -25,8 +26,10 @@ export class RunnerEntity extends Component {
         this.originalPosition.set(this.node.position);
         this.originalScale.set(this.node.scale);
         this.warningNode = this.node.getChildByName('Warning');
-        this.glowNode = this.node.getChildByName('Glow');
+        this.warningBackgroundNode = this.node.getChildByName('WarningBackground');
+        this.glowSprite = this.node.children[0].getComponent(Sprite);
         if (this.warningNode) this.warningNode.active = this.warning;
+        if (this.warningBackgroundNode) this.warningBackgroundNode.active = this.warning;
     }
 
     reset(): void {
@@ -36,6 +39,7 @@ export class RunnerEntity extends Component {
         this.collected = false;
         this.pulseTime = 0;
         if (this.warningNode) this.warningNode.active = this.warning;
+        if (this.warningBackgroundNode) this.warningBackgroundNode.active = this.warning;
         this.getComponent(RunnerAnimator)?.play('enemy', true);
     }
 
@@ -45,10 +49,11 @@ export class RunnerEntity extends Component {
             const p = this.node.position;
             this.node.setPosition(p.x - 300 * dt, p.y, p.z);
         }
-        if (this.kind === 'cone' && this.glowNode) {
+        if (this.kind === 'cone' && this.glowSprite) {
             this.pulseTime += dt * 3;
-            const s = 0.8 * (0.9 + (Math.sin(this.pulseTime) + 1) * 0.1);
-            this.glowNode.setScale(s, s, 1);
+            const color = this.glowSprite.color;
+            const alpha = Math.round(175 + (Math.sin(this.pulseTime) + 1) * 40);
+            this.glowSprite.color = new Color(color.r, color.g, color.b, alpha);
         }
         if (this.kind === 'dollar' || this.kind === 'paypal') {
             this.pulseTime += dt * 0.5;
@@ -58,8 +63,9 @@ export class RunnerEntity extends Component {
             this.node.setPosition(p.x, this.originalPosition.y + Math.sin(this.pulseTime * 2) * 5, p.z);
         }
         if (this.warningNode && this.warningNode.active) {
-            const s = 1 + Math.sin(this.pulseTime * 8) * 0.1;
+            const s = 1 + Math.sin(this.pulseTime * 2) * 0.1;
             this.warningNode.setScale(s, s, 1);
+            this.warningBackgroundNode?.setScale(s, s, 1);
             this.pulseTime += dt;
         }
     }
