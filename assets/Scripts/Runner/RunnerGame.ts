@@ -75,6 +75,8 @@ export class RunnerGame extends Component {
     private stepElapsed = 0;
     private layoutWidth = 0;
     private layoutHeight = 0;
+    private layoutFrameWidth = 0;
+    private layoutFrameHeight = 0;
     private overlayScale = 1;
     private pulseTime = 0;
     private portraitButtonBaseScale = new Vec3(1, 1, 1);
@@ -464,9 +466,14 @@ export class RunnerGame extends Component {
         const frameSize = view.getFrameSize();
         if (frameSize.height <= 0) return;
         const size = { width: designSize.height * frameSize.width / frameSize.height, height: designSize.height };
-        if (Math.abs(size.width - this.layoutWidth) < 1 && Math.abs(size.height - this.layoutHeight) < 1) return;
+        if (Math.abs(size.width - this.layoutWidth) < 1
+            && Math.abs(size.height - this.layoutHeight) < 1
+            && frameSize.width === this.layoutFrameWidth
+            && frameSize.height === this.layoutFrameHeight) return;
         this.layoutWidth = size.width;
         this.layoutHeight = size.height;
+        this.layoutFrameWidth = frameSize.width;
+        this.layoutFrameHeight = frameSize.height;
 
         const halfWidth = size.width / 2;
         const halfHeight = size.height / 2;
@@ -478,10 +485,24 @@ export class RunnerGame extends Component {
         hearts?.setPosition(-halfWidth + 83 * pixel, halfHeight - 62 * pixel, 0);
         hearts?.setScale(1.72 * 720 / frameSize.height, 1.72 * 720 / frameSize.height, 1);
         const balance = hud?.getChildByName('Balance');
-        balance?.setPosition(halfWidth - 79 * pixel, halfHeight - 60 * pixel, 0);
-        const balanceScale = 115 * pixel / 808;
+        // Match the reference HUD: 12vh, clamped to 50–80 CSS pixels, with
+        // 20px inset from both viewport edges.
+        const balanceHeight = Math.min(80, Math.max(50, frameSize.height * 0.12)) * pixel;
+        const balanceWidth = balanceHeight * 808 / 551;
+        const balanceX = halfWidth - (20 * pixel + balanceWidth / 2);
+        const balanceY = halfHeight - (20 * pixel + balanceHeight / 2);
+        balance?.setPosition(balanceX, balanceY, 0);
+        const balanceScale = balanceWidth / 808;
         balance?.setScale(balanceScale, balanceScale, 1);
-        hud?.getChildByName('Score')?.setPosition(halfWidth - 52 * pixel, halfHeight - 60 * pixel, 0);
+        const scoreNode = hud?.getChildByName('Score');
+        scoreNode?.setPosition(balanceX + balanceWidth * 0.23, balanceY, 0);
+        scoreNode?.getComponent(UITransform)?.setContentSize(balanceWidth * 0.42, balanceHeight * 0.7);
+        if (this.scoreLabel) {
+            this.scoreLabel.overflow = Label.Overflow.SHRINK;
+            this.scoreLabel.enableWrapText = false;
+            this.scoreLabel.fontSize = 28 * pixel;
+            this.scoreLabel.lineHeight = 32 * pixel;
+        }
 
         const ui = this.node.getChildByName('UI');
         ui?.getChildByName('IntroPrompt')?.setScale(this.overlayScale, this.overlayScale, 1);

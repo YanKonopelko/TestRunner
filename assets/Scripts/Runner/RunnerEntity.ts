@@ -27,7 +27,11 @@ export class RunnerEntity extends Component {
         this.originalScale.set(this.node.scale);
         this.warningNode = this.node.getChildByName('Warning');
         this.warningBackgroundNode = this.node.getChildByName('WarningBackground');
-        this.glowSprite = this.node.children[0].getComponent(Sprite);
+        // Only cones use the pulsing glow. Most runner entities render directly
+        // on their root node and therefore legitimately have no children.
+        this.glowSprite = this.kind === 'cone'
+            ? this.node.children[0]?.getComponent(Sprite) ?? null
+            : null;
         if (this.warningNode) this.warningNode.active = this.warning;
         if (this.warningBackgroundNode) this.warningBackgroundNode.active = this.warning;
     }
